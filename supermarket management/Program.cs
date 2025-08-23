@@ -119,7 +119,7 @@ namespace supermarket_management
         }
 
         // Method to display the customer's cart
-        public void desplayCart()
+        public void displayCart()
         {
             Console.WriteLine("\n--- Your Purchases ---\n");
             if (cart.Count == 0)
@@ -253,7 +253,7 @@ namespace supermarket_management
                 }
                 else if (choice == "3")
                 {
-                    //CustomerMenu();
+                    CustomerMenu();
                 }
                 else
                 {
@@ -475,7 +475,7 @@ namespace supermarket_management
 
         }
         // Customer menu
-        public static void CustomerMenu(Admin admin, Customer customer)
+        public static void CustomerMenu()
         {
             while (true)
             {
@@ -491,49 +491,65 @@ namespace supermarket_management
                 {
                     case "1":
                         // Display all available products
-                        foreach (Product p in products)
+                        if (DataStore.products.Count == 0)
                         {
-                            
+                            Console.WriteLine("No products available.");
                         }
-                        break;
-                    case "2":
-                        // Buy a product
-                        Console.Write("Enter Product Name: ");
-                        string pname = Console.ReadLine();
-
-                        Console.Write("Enter Quantity to Buy: ");
-                        int qty;
-                        if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
+                        else
                         {
-                            Console.WriteLine("Invalid quantity.  Please try again.");
-                            continue;
-                        }
-                        if (string.IsNullOrEmpty(pname))
-                        {
-                            Console.WriteLine("Product name cannot be empty.  Please try again.");
-                            continue;
-                        }
-                        Product product = null;
-
-                        foreach (Product p in DataStore.products)
-                        {
-                            if (p.Name == pname)
+                            Console.WriteLine("\n--- Available Products ---");
+                            foreach (Product p in DataStore.products)
                             {
-                                product = p;
-                                break;
+                                p.Display();
                             }
                         }
+                        break;
 
-                        if (product != null)
-                            customer.buyProduct(product, qty);
-                        else
-                            Console.WriteLine("Product not found. Please try again.");
+                    case "2":
+                        // Buy a product
+
+                        while(true)
+                        {
+                            Console.WriteLine("\n--- Buy Product ---");
+                            Console.Write("Enter Product Name: ");
+                            string pname = Console.ReadLine();
+
+                            Console.Write("Enter Quantity to Buy: ");
+                            int qty;
+                            if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
+                            {
+                                Console.WriteLine("Invalid quantity.  Please try again.");
+                                continue;
+                            }
+                            if (string.IsNullOrEmpty(pname))
+                            {
+                                Console.WriteLine("Product name cannot be empty.  Please try again.");
+                                continue;
+                            }
+                            Product product = null;
+
+                            foreach (Product p in DataStore.products)
+                            {
+                                if (p.Name == pname)
+                                {
+                                    product = p;
+                                    break;
+                                }
+                            }
+                            if (product != null)
+                            {
+                                customer.buyProduct(product, qty);
+                                break;
+                            }
+                            else
+                                Console.WriteLine("Product not found. Please try again.");
+                        }
 
                         break;
 
                     case "3":
                         // View customer's purchases
-                        customer.desplayCart();
+                        customer.displayCart();
                         break;
 
                     case "4":
@@ -546,11 +562,10 @@ namespace supermarket_management
                         break;
                 }
 
-
-
             }
         }
         
     }
 
 }
+
