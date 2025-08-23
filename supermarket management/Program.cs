@@ -32,6 +32,7 @@ namespace supermarket_management
             Console.WriteLine($"{Name} ,{Category} ,{Quantity},{ProductionDate:yyyy-MM-dd},{ExpiryDate:yyyy-MM-dd}\n");
         }
     }
+    
     // DataStore class to manage products and admins
     public static class DataStore
     {
@@ -73,6 +74,7 @@ namespace supermarket_management
         }
 
     }
+    
     // Order class to represent a customer's order in the supermarket
     public class Order
     {
@@ -89,6 +91,7 @@ namespace supermarket_management
             Console.WriteLine($"- {ProductName} (qty:{Quantity})");
         }
     }
+    
     // Customer class to represent a customer in the supermarket
     public class Customer
     {
@@ -132,6 +135,7 @@ namespace supermarket_management
             }
         }
     }
+    
     // Admin class to manage products in the supermarket
     public class Admin
     {
