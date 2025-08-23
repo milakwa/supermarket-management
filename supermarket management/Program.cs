@@ -1,4 +1,4 @@
-﻿namespace supermarket_management 
+namespace supermarket_management 
 {
     public class Product
     {
@@ -17,9 +17,10 @@
             ProductionDate = productionDate;
             ExpiryDate = expiryDate;
         }
+        // Method to display product details
         public void Display()
         {
-            Console.WriteLine(Name + ", " + Category + ", " + Quantity + ", " + ProductionDate + ", " + ExpiryDate);
+            Console.WriteLine($"{Name} ,{Category} ,{Quantity},{ProductionDate:yyyy-MM-dd},{ExpiryDate:yyyy-MM-dd}\n");
         }
     }
     public static class DataStore
@@ -42,6 +43,8 @@
                         DateTime.Parse(parts[4])       // ExpiryDate
                         );
                     products.Add(p);
+                    
+                    
                 }
             }
 
@@ -52,7 +55,8 @@
             List<string> lines = new List<string>();
             foreach (Product p in products)
             {
-                lines.Add($"{p.Name} ,{p.Category} ,{p.Quantity} ,{p.ProductionDate} ,{p.ExpiryDate}.");
+                lines.Add($"{p.Name},{p.Category},{p.Quantity},{p.ProductionDate:yyyy-MM-dd},{p.ExpiryDate:yyyy-MM-dd}");
+
             }
 
             File.WriteAllLines(filePath, lines);
@@ -72,53 +76,38 @@
             username = user;
             password = pass;
         }
+        // Method to add a product to the product list
         public void AddProduct(Product p, int q)
         {
 
 
             DataStore.products.Add(p);
+            
 
         }
+        // Method to view products that are near expiry (within 7 days)
         public void viewExpiryAlerts()
         {
+            DateTime today = DateTime.Now;
+            bool found = false;
 
-            DateTime today;
-            bool valid = false;
-
-
-            while (!valid)
+            foreach (Product p in DataStore.products)
             {
-                Console.Write("Enter today's date (yyyy-MM-dd): ");
-                string input = Console.ReadLine();
-
-                if (DateTime.TryParse(input, out today))
+                if (checkExpiry(p))
                 {
-                    valid = true;
-
-                    bool found = false;
-
-                    foreach (Product p in DataStore.products)
-                    {
-                        TimeSpan diff = p.expiryDate - today;
-
-                        if (diff.TotalDays <= 7 && diff.TotalDays >= 0)
-                        {
-                            Console.WriteLine($"{p.name} (Qty: {p.quantity}) is near expiry.");
-                            found = true;
-                        }
-                    }
-
-                    if (!found)
-                    {
-                        Console.WriteLine("No products near expiry.");
-                    }
+                    Console.WriteLine($"{p.Name} (Qty: {p.Quantity}) is near expiry.");
+                    found = true;
+                    continue;
                 }
-                else
-                {
-                    Console.WriteLine("Invalid date format! Please try again.");
-                }
+
             }
-        }
+            if (!found)
+            {
+                Console.WriteLine("No products near expiry.");
+            }
+
+        }        
+        // Method to check if a product is near expiry (within 7 days)
         public bool checkExpiry(Product p)
         {
             DateTime today = DateTime.Now;
@@ -134,78 +123,171 @@
 
     }
 
+
     internal class Program
     {
         static void Main(string[] args)
         {
-                while(true){
-                Console.WriteLine("1. Admin");
-                Console.WriteLine("2. Customer");
-                Console.WriteLine("3. Exit");
-                Console.Write("Enter your choice: ");
-                int choice = int.Parse(Console.ReadLine());
-            switch(choice){
-                case 1:
-                    Console.Write("Enter your name: ");
-                    string user = Console.ReadLine();
-                    Console.Write("Creat your pass: ");
-                    string pass = Console.ReadLine();
-                    Console.WriteLine("Hello "+ user);
-                    Console.WriteLine("1. Show all products");
-                    Console.WriteLine("2. Add new products");
-                    Console.WriteLine("3. Show expiry products");
-                    Console.WriteLine("4. Exit");
-                    Console.Write("Enter your choice: ");
-                    int choice1 = int.Parse(Console.ReadLine());
-                    switch(choice1){
-                        case 1:
-                           Display();
-                           break;
-                        case 2:
-                           AddProuct();
-                           break;
-                        case 3:
-                           ViewExpiryAlerts();
-                           break;
-                        case 4:
-                           return;
-                           break;
-                        default:
-                           Console.WriteLine("Invalid choice. Try again");           
-                           break;
-                    }
-                    break;
-                case 2:
-                    Console.Write("Enter your name: ");
-                    string user = Console.ReadLine();
-                    Console.Write("Creat your pass: ");
-                    string pass = Console.ReadLine();
-                    Console.WriteLine("Hello "+ user);
-                    Console.WriteLine("1. Show all products");
-                    Console.WriteLine("2. Show list products bought");
-                    Console.Write("Enter your choice: ");
-                    int choice2 = int.Parse(Console.ReadLine());
-                    switch(choice2){
-                            case 1:
-                                Display();
-                                Console.Write("Enter num products to buy; ");
-                                    //
-                                break;
-                            case 2: 
-                                    //
-                                break;
+            
+            DataStore.loadProducts();
+
+            while (true)
+            { 
+                Console.WriteLine("--- Supermarket Management ---");
+                Console.WriteLine("1. Creat Admin.");
+                Console.WriteLine("2. Login as Admin (You already have an account).");
+                Console.WriteLine("3. Continue as Customer");
+                Console.WriteLine("4. Exit");
+                Console.Write("Choose: ");
+                string choice = Console.ReadLine();
+                
+                if (choice == "1")
+                {
+                    Admin admin=CreatAdmin(); // Here we can use the created admin object
+
+                    while (true)
+                    {
+                        Console.WriteLine("\n--- Admin Menu ---");
+                        Console.WriteLine("1. View Products");
+                        Console.WriteLine("2. Add Product");
+                        Console.WriteLine("3. View Expiry Alerts");
+                        Console.WriteLine("4. Save & Exit");
+                        Console.Write("Choose: ");
+                        string aChoice = Console.ReadLine();
+                       
+                        switch (aChoice)
+                        {
+                            case "1":
+                                // Display all products in the list
+                                Console.WriteLine("\n--- Products List ---\n");
+                                foreach (Product p in DataStore.products)
+                                {
+                                    p.Display();
+                                }
+                               
+                            break;
+
+                            case "2":
+                                // Here we can use the created admin object
+                                InputProductsDetails(admin); 
+                            break;
+
+                            case "3":
+                                // Display products that are near expiry
+                                Console.WriteLine("\n---products near expiry---\n");
+                                admin.viewExpiryAlerts();
+                            break;
+
+                            case "4":
+                                // Save products to file and exit the admin menu
+                                DataStore.saveProducts(); 
+                                Console.WriteLine("\nProducts saved successfully. Exiting.....\n");
+                            break; 
+
                             default:
-                                break;
+                                
+                                Console.WriteLine("\nInvalid choice. Please try again.\n");
+                            break;
+
+                        }
+                        if (aChoice == "4")
+                            break;
+                        
                     }
-                    break;
-                case 3:
-                    return;
-                    break;
-                default:
-                    Console.WriteLine("Invalid choice. Try again");
-                    break; 
+
+                }
+                else
+                {
+
+                }
+
+
             }
-          }
+            
+
+            
+        }
+        // Method to create an admin account
+        public static Admin CreatAdmin()
+        {
+            string name, pass;
+            while (true)
+            {
+                Console.Write("\nEnter Username: ");
+                name = Console.ReadLine();
+                Console.Write("Enter Password: ");
+                pass = Console.ReadLine();
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(pass))
+                {
+                    Console.WriteLine("\nUsername or Password cannot be empty. Please try again.\n");
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            // Create an Admin object with the provided username and password
+            Admin admin = new Admin(name, pass);
+            Console.WriteLine("\nAdmin created successfully!\n");
+            return admin; // Return the created admin object
+        }
+        // Method to input product details
+        static void InputProductsDetails(Admin admin)
+        {
+            string name, category;
+            int quantity;
+            DateTime productionDate, expiryDate;
+
+            // Loop until valid product details are entered
+            while (true)
+            {
+                Console.WriteLine("\n--- Input Product Details ---");
+                Console.Write("Enter Product Name: ");
+                name = Console.ReadLine();
+                Console.Write("Enter Product Category: ");
+                category = Console.ReadLine();
+        
+                Console.Write("Enter Product Quantity: ");
+                if (!int.TryParse(Console.ReadLine(), out quantity) || quantity <= 0)
+                {
+                    Console.WriteLine("\nQuantity must be a positive number. Please try again.");
+                    continue;
+                }
+
+                Console.Write("Enter Production Date (yyyy-MM-dd): ");
+                if (!DateTime.TryParse(Console.ReadLine(), out productionDate))
+                {
+                    Console.WriteLine("\nInvalid production date. Please try again.");
+                    continue;
+                }
+
+                Console.Write("Enter Expiry Date (yyyy-MM-dd): ");
+                if (!DateTime.TryParse(Console.ReadLine(), out expiryDate))
+                {
+                    Console.WriteLine("\nInvalid expiry date. Please try again.");
+                    continue;
+                }
+
+                if (productionDate > DateTime.Now)
+                {
+                    Console.WriteLine("\nProduction date cannot be in the future. Please try again.");
+                    continue;
+                }
+                if (expiryDate < productionDate)
+                {
+                    Console.WriteLine("\nExpiry date cannot be earlier than production date. Please try again.");
+                    continue;
+                }
+
+                break;
+            }
+
+            // Create a new Product object and add it to the admin's product list
+            Product newProduct = new Product(name, category, quantity, productionDate, expiryDate);
+            admin.AddProduct(newProduct, quantity);
+            
         }
     }
 }
+
