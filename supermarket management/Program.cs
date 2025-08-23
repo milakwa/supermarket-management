@@ -1,5 +1,14 @@
-namespace supermarket_management 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static supermarket_management.Program;
+
+namespace supermarket_management
 {
+    
+    // Product class to represent a product in the supermarket
     public class Product
     {
         // Product attributes 
@@ -23,9 +32,12 @@ namespace supermarket_management
             Console.WriteLine($"{Name} ,{Category} ,{Quantity},{ProductionDate:yyyy-MM-dd},{ExpiryDate:yyyy-MM-dd}\n");
         }
     }
+    // DataStore class to manage products and admins
     public static class DataStore
     {
         public static List<Product> products = new List<Product>();
+        // static List<Order> customerOrders = new List<Order>();
+        public static List<Admin> admins = new List<Admin>();
         public static string filePath = "Products.txt";
 
         public static void loadProducts()
@@ -43,8 +55,8 @@ namespace supermarket_management
                         DateTime.Parse(parts[4])       // ExpiryDate
                         );
                     products.Add(p);
-                    
-                    
+
+
                 }
             }
         }
@@ -59,7 +71,68 @@ namespace supermarket_management
 
             File.WriteAllLines(filePath, lines);
         }
+
     }
+    // Order class to represent a customer's order in the supermarket
+    public class Order
+    {
+        public string ProductName { get; set; }
+        public int Quantity { get; set; }
+        public Order(string productName, int quantity)
+        {
+            ProductName = productName;
+            Quantity = quantity;
+        }
+
+        public void DisplayProductInCatt()
+        {
+            Console.WriteLine($"- {ProductName} (qty:{Quantity})");
+        }
+    }
+    // Customer class to represent a customer in the supermarket
+    public class Customer
+    {
+        public string name { get; set; }
+        public List<Order> cart { get; set; }
+
+        public Customer(string Name)
+        {
+            Name = name;
+            cart = new List<Order>();
+        }
+        // Method to add a product to the customer's cart
+        public void buyProduct(Product p, int quantity)
+        {
+            if (p.Quantity >= quantity)
+            {
+                p.Quantity -= quantity;
+                // To add the purchased product to the customer's cart
+                cart.Add(new Order(p.Name,quantity));
+
+                Console.WriteLine($"You have successfully purchased {quantity} of {p.Name}!");
+            }
+            else
+            {
+                Console.WriteLine($"! Purchase Failed ! Not enough {p.Name} in stock");
+                Console.WriteLine($"Available quantity is {p.Quantity}");
+            }
+        }
+
+        // Method to display the customer's cart
+        public void desplayCart()
+        {
+            Console.WriteLine("\n--- Your Purchases ---\n");
+            if (cart.Count == 0)
+            {
+                Console.WriteLine("No purchases yet.");
+            }
+            foreach (Order order in cart)
+            {
+                order.DisplayProductInCatt();
+            }
+        }
+    }
+    // Admin class to manage products in the supermarket
     public class Admin
     {
         private string Username;
@@ -75,8 +148,38 @@ namespace supermarket_management
         // Method to add a product to the product list
         public void AddProduct(Product p, int q)
         {
-            DataStore.products.Add(p);
+            Product existingProduct = null;
+
+            foreach (Product prod in DataStore.products)
+            {
+                if (prod.Name == p.Name && prod.Category == p.Category)
+                {
+                    existingProduct = prod;
+                    break;
+                }
+            }
+
+            if (existingProduct != null)
+            {
+                existingProduct.Quantity += q;
+                Console.WriteLine($"Updated {existingProduct.Name}, new quantity = {existingProduct.Quantity}");
+            }
+            else
+            {
+                DataStore.products.Add(p);
+                Console.WriteLine($"Added new product: {p.Name}");
+            }
         }
+        // Method to view all products in store
+        public void ViewProducts()
+        {
+            Console.WriteLine("\n--- Products List ---\n");
+            foreach (Product p in DataStore.products)
+            {
+                p.Display();
+            }
+        }
+
         // Method to view products that are near expiry (within 7 days)
         public void viewExpiryAlerts()
         {
@@ -98,7 +201,7 @@ namespace supermarket_management
                 Console.WriteLine("No products near expiry.");
             }
 
-        }        
+        }
         // Method to check if a product is near expiry (within 7 days)
         public bool checkExpiry(Product p)
         {
@@ -118,14 +221,13 @@ namespace supermarket_management
 
     internal class Program
     {
-        static List<Order> customerOrders = new List<Order>();
-        static List<Admin> admins = new List<Admin>();
+
         static void Main(string[] args)
         {
             DataStore.loadProducts();
 
             while (true)
-            { 
+            {
                 Console.WriteLine("--- Supermarket Management ---");
                 Console.WriteLine("1. Creat Admin");
                 Console.WriteLine("2. Login as Admin (You already have an account)");
@@ -133,35 +235,41 @@ namespace supermarket_management
                 Console.WriteLine("4. Exit");
                 Console.Write("Choose: ");
                 string choice = Console.ReadLine();
-                
+
                 if (choice == "1")
                 {
-                    Admin admin=CreatAdmin(); // Here we can use the created admin object
-                    admins.Add(admin);
-                    AdminMenu(admin);
+                    Admin admin = CreateAdmin(); // Here we can use the created admin object
+                    DataStore.admins.Add(admin);// To add the created admin to the list
+                    AdminMenu(admin);// To call the AdminMenu method with the created admin object
                 }
-                else if(choice == "2"){
-                    Admin admin = LoginAdmin();
+                else if (choice == "2")
+                {
+                    Admin admin = LoginAdmin();// To call the LoginAdmin method to login as admin
                     if (admin != null)
                     {
                         AdminMenu(admin);
                     }
+                    
                 }
-                else if(choice == "3"){
-                    CustomerMenu();
+                else if (choice == "3")
+                {
+                    //CustomerMenu();
                 }
-                else{
+                else
+                {
+                    Console.WriteLine("Exiting.......");
                     return;
                 }
             }
         }
         // Method to create an admin account
-        public static Admin CreatAdmin()
+        public static Admin CreateAdmin()
         {
             string name, pass;
             while (true)
             {
-                Console.Write("\nEnter Username: ");
+                Console.WriteLine("\n--- Create Admin ---");
+                Console.Write("Enter Username: ");
                 name = Console.ReadLine();
                 Console.Write("Enter Password: ");
                 pass = Console.ReadLine();
@@ -170,32 +278,89 @@ namespace supermarket_management
                     Console.WriteLine("\nUsername or Password cannot be empty. Please try again.\n");
                     continue;
                 }
-                else
+                
+                Admin existingAdmin = DataStore.admins.Find(a => a.username == name);
+
+                if (existingAdmin != null)
                 {
-                    break;
+                    Console.WriteLine("\nThis username already exists. Logging you in...\n");
+                    
+                    if (existingAdmin.password == pass)
+                    {
+                        Console.WriteLine($"Welcome back {existingAdmin.username}!");
+                        return existingAdmin;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\nWrong password for this username. Please login again.\n");
+                        return null;
+                    }
                 }
+                break;
             }
             // Create an Admin object with the provided username and password
             Admin admin = new Admin(name, pass);
-            Console.WriteLine("\nAdmin created successfully!\n");
+            Console.WriteLine("\nAdmin created successfully!");
             return admin; // Return the created admin object
         }
         // Method to check login admin
         public static Admin LoginAdmin()
         {
-            Console.Write("\nEnter Username: ");
-            string user = Console.ReadLine();
-            Console.Write("Enter Password: ");
-            string pass = Console.ReadLine();
+            if (DataStore.admins.Count == 0)
+            {
+                Console.WriteLine("\nNo admin accounts found. Please create an admin account first.\n");
+                return null;
+            }
 
-            Admin admin = admins.Find(a => a.username == user && a.password == pass);
+            string user, pass;
+            
+            while(true)
+            {
+                Console.WriteLine("\n--- Admin Login ---");
+                Console.Write("Enter Username: ");
+                user = Console.ReadLine();
+                Console.Write("Enter Password: ");
+                pass = Console.ReadLine();
 
-            if (admin != null)
-                Console.WriteLine("\nLogged in successfully!\n");
-            else
-                Console.WriteLine("\n Invalid username or password!\n");
+                if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
+                {
+                    Console.WriteLine("\nUsername or Password cannot be empty. Please try again.\n");
+                    continue;
+                }
+                
+                Admin admin = DataStore.admins.Find(a => a.username == user && a.password == pass);
 
-            return admin;
+                if (admin != null)
+                {
+                    Console.WriteLine("\nLogged in successfully!");
+                    return admin;
+                }
+
+                else
+                {
+                    Console.WriteLine("\nInvalid username or password or you don't have admin account!\n");
+                    Console.Write("you have account(y/n):");
+                    string haveAccount = Console.ReadLine().ToLower();
+                    if (haveAccount == "y")
+                    {
+                        continue; // To continue the loop for login again
+                    }
+                    else if (haveAccount == "n")
+                    {
+                        return null; // To return null if the user doesn't have an account
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                        continue; // To continue the loop for login again
+
+                    }
+
+                }
+
+            }
+            
+            
         }
         //Admin menu
         public static void AdminMenu(Admin admin)
@@ -206,42 +371,55 @@ namespace supermarket_management
                 Console.WriteLine("1. View Products");
                 Console.WriteLine("2. Add Product");
                 Console.WriteLine("3. View Expiry Alerts");
-                Console.WriteLine("4. Save & Exit");
+                Console.WriteLine("4. Save & Back to Main Menu ");
                 Console.Write("Choose: ");
-                string aChoice = Console.ReadLine();
+                string Choice = Console.ReadLine();
 
-                switch (aChoice)
+                switch (Choice)
                 {
                     case "1":
-                        Console.WriteLine("\n--- Products List ---\n");
-                        foreach (Product p in DataStore.products)
+                        
+                        if (DataStore.products.Count == 0)
                         {
-                            p.Display();
+                            Console.WriteLine("\nNo products available.\n");
+                            continue; // To continue the loop if no products are available
+                        }
+                        else
+                        {
+                            // Display all products in the store
+                            admin.ViewProducts();
                         }
                         break;
 
                     case "2":
+                        // Input product details
                         InputProductsDetails(admin);
                         break;
 
                     case "3":
+                        // View products that are near expiry
                         Console.WriteLine("\n--- Products near expiry ---\n");
                         admin.viewExpiryAlerts();
                         break;
 
                     case "4":
+                        // Save products to file and exit
                         DataStore.saveProducts();
-                        Console.WriteLine("\nProducts saved. Exiting...\n");
+                        Console.WriteLine("\nProducts saved. Exit from the list of Admin...\n");
                         return;
 
                     default:
                         Console.WriteLine("\nInvalid choice. Please try again.\n");
                         break;
                 }
+                if (Choice == "4")
+                {
+                    break; // To exit the admin menu
+                }
             }
         }
         // Method to input product details
-        static void InputProductsDetails(Admin admin)
+        public static void InputProductsDetails(Admin admin)
         {
             string name, category;
             int quantity;
@@ -255,7 +433,7 @@ namespace supermarket_management
                 name = Console.ReadLine();
                 Console.Write("Enter Product Category: ");
                 category = Console.ReadLine();
-        
+
                 Console.Write("Enter Product Quantity: ");
                 if (!int.TryParse(Console.ReadLine(), out quantity) || quantity <= 0)
                 {
@@ -294,92 +472,85 @@ namespace supermarket_management
             // Create a new Product object and add it to the admin's product list
             Product newProduct = new Product(name, category, quantity, productionDate, expiryDate);
             admin.AddProduct(newProduct, quantity);
-            
+
         }
         // Customer menu
-        static void CustomerMenu()
+        public static void CustomerMenu(Admin admin, Customer customer)
         {
             while (true)
             {
                 Console.WriteLine("\n--- Customer Menu ---");
                 Console.WriteLine("1. View Products");
                 Console.WriteLine("2. Buy Product");
-                Console.WriteLine("3. Back to Main Menu");
-                Console.WriteLine("4. View My Purchases");
+                Console.WriteLine("3. View My Purchases");
+                Console.WriteLine("4.Back to Main Menu");
                 Console.Write("Choose: ");
-                string Choicee = Console.ReadLine();
+                string Choice = Console.ReadLine();
 
-                if (Choicee == "1")
+                switch (Choice)
                 {
-                    Console.WriteLine("\n--- Available Products ---\n");
-                    foreach (Product p in DataStore.products){ 
-                        p.Display();
-                    }
-                }
-                else if (Choicee == "2")
-                {
-                    Console.Write("Enter Product Name: ");
-                    string pname = Console.ReadLine();
-
-                    Console.Write("Enter Quantity to Buy: ");
-                    int qty;
-                    if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
-                    {
-                        Console.WriteLine("Invalid quantity.");
-                        continue;
-                    }
-
-                    // To search of Product
-                    Product product = DataStore.products.Find(p => p.Name.Equals(pname, StringComparison.OrdinalIgnoreCase));
-
-                    if (product != null && product.Quantity >= qty)
-                    {
-                        product.Quantity -= qty; // To deducted from the store
-                        DataStore.saveProducts();
-                        customerOrders.Add(new Order(product.Name, qty));
-                        Console.WriteLine($"You bought {qty} of {product.Name}. Remaining stock: {product.Quantity}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Not enough stock or product not found.");
-                    }
-                }
-                else if (Choicee == "3")
-                {
-                    break; // To return to main menu 
-                }
-                else if (Choicee == "4"){
-                    Console.WriteLine("\n--- Your Purchases ---\n");
-                    if (customerOrders.Count == 0){
-                        Console.WriteLine("No purchases yet.");
-                    }
-                    else{
-                        foreach (Order order in customerOrders)
+                    case "1":
+                        // Display all available products
+                        foreach (Product p in products)
                         {
-                            order.DisplayProduct();
+                            
                         }
-                    }
+                        break;
+                    case "2":
+                        // Buy a product
+                        Console.Write("Enter Product Name: ");
+                        string pname = Console.ReadLine();
+
+                        Console.Write("Enter Quantity to Buy: ");
+                        int qty;
+                        if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
+                        {
+                            Console.WriteLine("Invalid quantity.  Please try again.");
+                            continue;
+                        }
+                        if (string.IsNullOrEmpty(pname))
+                        {
+                            Console.WriteLine("Product name cannot be empty.  Please try again.");
+                            continue;
+                        }
+                        Product product = null;
+
+                        foreach (Product p in DataStore.products)
+                        {
+                            if (p.Name == pname)
+                            {
+                                product = p;
+                                break;
+                            }
+                        }
+
+                        if (product != null)
+                            customer.buyProduct(product, qty);
+                        else
+                            Console.WriteLine("Product not found. Please try again.");
+
+                        break;
+
+                    case "3":
+                        // View customer's purchases
+                        customer.desplayCart();
+                        break;
+
+                    case "4":
+                        // Back to main menu
+                        DataStore.saveProducts();
+                        return;
+
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
                 }
-                else
-                {
-                    Console.WriteLine("Invalid choice.");
-                }
+
+
+
             }
         }
-        // To storge customer orders
-        public class Order {
-            public string ProductName { get; set; }
-            public int Quantity { get; set; }
-            public Order(string productName, int quantity)
-            {
-                ProductName = productName;
-                Quantity = quantity;
-            }
         
-            public void DisplayProduct()
-            {
-                Console.WriteLine($"- {ProductName} (x{Quantity})");
-            }
-        }
     }
+
 }
