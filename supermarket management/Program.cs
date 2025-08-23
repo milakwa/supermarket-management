@@ -253,7 +253,8 @@ namespace supermarket_management
                 }
                 else if (choice == "3")
                 {
-                    CustomerMenu();
+                    Customer customer = new Customer("Customer"); // Create a new customer object
+                    CustomerMenu(customer);
                 }
                 else
                 {
@@ -475,7 +476,7 @@ namespace supermarket_management
 
         }
         // Customer menu
-        public static void CustomerMenu()
+        public static void CustomerMenu(Customer customer)
         {
             while (true)
             {
@@ -568,4 +569,3 @@ namespace supermarket_management
     }
 
 }
-
