@@ -33,6 +33,7 @@ namespace supermarket_management
             Console.WriteLine($"{Name} ,{Category} ,{Quantity},{ProductionDate:yyyy-MM-dd},{ExpiryDate:yyyy-MM-dd}\n");
         }
     }
+    
     //Malak & Habeba
     // DataStore class to manage products and admins
     public static class DataStore
@@ -78,6 +79,7 @@ namespace supermarket_management
         }
 
     }
+    
     //Habeba
     // Order class to represent a customer's order in the supermarket
     public class Order
@@ -96,6 +98,7 @@ namespace supermarket_management
             Console.WriteLine($"- {ProductName} (qty:{Quantity})");
         }
     }
+    
     //Aya
     // Customer class to represent a customer in the supermarket
     public class Customer
@@ -145,13 +148,12 @@ namespace supermarket_management
             }
         }
     }
+    
     //Sohila
     // Admin class to manage products in the supermarket
     public class Admin
     {
         // Admin attributes
-        private string Username;
-        private string Password;
         public string username { get; set; }
         public string password { get; set; }
 
@@ -467,6 +469,12 @@ namespace supermarket_management
                 Console.Write("Enter Product Category: ");
                 category = Console.ReadLine();
 
+                if(string.IsNullOrEmpty(name) || string.IsNullOrEmpty(category))
+                {
+                    Console.WriteLine("\nProduct name or category cannot be empty. Please try again.");
+                    continue;
+                }
+
                 Console.Write("Enter Product Quantity: ");
                 if (!int.TryParse(Console.ReadLine(), out quantity) || quantity <= 0)
                 {
@@ -548,8 +556,25 @@ namespace supermarket_management
                             
                             Console.WriteLine("\n--- Buy Product ---");
                             Console.Write("Enter Product Name: ");
-                            string pname = Console.ReadLine();
-                            
+                            string pname = Console.ReadLine().Trim();
+
+                            // Validate product name input
+                            if (string.IsNullOrEmpty(pname))
+                            {
+                                Console.WriteLine("\nProduct name cannot be empty.  Please try again.\n");
+                                continue;
+                            }
+                            if (pname.All(char.IsDigit))
+                            {
+                                Console.WriteLine("\nProduct name cannot be only numbers. Please try again.\n");
+                                continue;
+                            }
+                            if (!pname.All(char.IsLetterOrDigit))
+                            {
+                                Console.WriteLine("\nProduct name cannot be only symbols. Please try again.\n");
+                                continue;
+                            }
+                            //check if Quantity is a valid number
                             Console.Write("Enter Quantity to Buy: ");
                             int qty;
                             if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
@@ -557,11 +582,7 @@ namespace supermarket_management
                                 Console.WriteLine("\nInvalid quantity.  Please try again.\n");
                                 continue;
                             }
-                            if (string.IsNullOrEmpty(pname))
-                            {
-                                Console.WriteLine("\nProduct name cannot be empty.  Please try again.\n");
-                                continue;
-                            }
+                           
                             // Find the product in the DataStore
                             Product product = null;
 
