@@ -7,16 +7,17 @@ using static supermarket_management.Program;
 
 namespace supermarket_management
 {
-    
+    //Habeba
     // Product class to represent a product in the supermarket
     public class Product
     {
         // Product attributes 
-        public string Name;
-        public string Category;
-        public int Quantity;
-        public DateTime ProductionDate;
-        public DateTime ExpiryDate;
+        public string Name {  get; set; }
+        public string Category { get; set; }
+        public int Quantity { get; set; }
+        public DateTime ProductionDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
+
         // Constructor: it calls when we add a new Product and fills in attributes
         public Product(string name, string category, int quantity, DateTime productionDate, DateTime expiryDate)
         {
@@ -32,14 +33,17 @@ namespace supermarket_management
             Console.WriteLine($"{Name} ,{Category} ,{Quantity},{ProductionDate:yyyy-MM-dd},{ExpiryDate:yyyy-MM-dd}\n");
         }
     }
+    //Malak & Habeba
     // DataStore class to manage products and admins
     public static class DataStore
     {
+        // Static lists to store products and admins
         public static List<Product> products = new List<Product>();
-        // static List<Order> customerOrders = new List<Order>();
         public static List<Admin> admins = new List<Admin>();
+        // File path to store products data
         public static string filePath = "Products.txt";
 
+        // Static constructor to load products from file when the program starts
         public static void loadProducts()
         {
             if (File.Exists(filePath))
@@ -60,6 +64,7 @@ namespace supermarket_management
                 }
             }
         }
+        // Method to save products to file
         public static void saveProducts()
         {
             List<string> lines = new List<string>();
@@ -73,9 +78,11 @@ namespace supermarket_management
         }
 
     }
+    //Habeba
     // Order class to represent a customer's order in the supermarket
     public class Order
     {
+        // Order attributes
         public string ProductName { get; set; }
         public int Quantity { get; set; }
         public Order(string productName, int quantity)
@@ -83,19 +90,21 @@ namespace supermarket_management
             ProductName = productName;
             Quantity = quantity;
         }
-
+        // Method to display the product in the customer's cart
         public void DisplayProductInCatt()
         {
             Console.WriteLine($"- {ProductName} (qty:{Quantity})");
         }
     }
+    //Aya
     // Customer class to represent a customer in the supermarket
     public class Customer
     {
-        public string name { get; set; }
+        // Customer attributes
+        public string Name { get; set; }
         public List<Order> cart { get; set; }
 
-        public Customer(string Name)
+        public Customer(string name)
         {
             Name = name;
             cart = new List<Order>();
@@ -115,7 +124,8 @@ namespace supermarket_management
                 Console.WriteLine($"Remaining stock: {p.Quantity}");
             }
             else
-            {
+            {  
+                // If not enough stock, display an error message
                 Console.WriteLine($"\nPurchase failed. Not enough {p.Name} in stock.");
                 Console.WriteLine($"Available quantity is {p.Quantity}");
             }
@@ -135,9 +145,11 @@ namespace supermarket_management
             }
         }
     }
+    //Sohila
     // Admin class to manage products in the supermarket
     public class Admin
     {
+        // Admin attributes
         private string Username;
         private string Password;
         public string username { get; set; }
@@ -161,7 +173,7 @@ namespace supermarket_management
                     break;
                 }
             }
-
+            // If the product already exists, update its quantity; otherwise, add it as a new product
             if (existingProduct != null)
             {
                 existingProduct.Quantity += q;
@@ -224,13 +236,14 @@ namespace supermarket_management
 
     internal class Program
     {
-
+        //Malak & Habeba
         static void Main(string[] args)
         {
             DataStore.loadProducts();
 
             while (true)
             {
+                // Display the main menu options
                 Console.WriteLine("--- Supermarket Management ---");
                 Console.WriteLine("1. Creat Admin");
                 Console.WriteLine("2. Login as Admin (You already have an account)");
@@ -243,20 +256,28 @@ namespace supermarket_management
                 {
                     Admin admin = CreateAdmin(); // Here we can use the created admin object
                     DataStore.admins.Add(admin);// To add the created admin to the list
+                    Console.WriteLine($"\nWelcome, Admin {admin.username}!");
                     AdminMenu(admin);// To call the AdminMenu method with the created admin object
                 }
                 else if (choice == "2")
                 {
-                    Admin admin = LoginAdmin();// To call the LoginAdmin method to login as admin
+                    // To call the LoginAdmin method to login as admin
+                    Admin admin = LoginAdmin();
                     if (admin != null)
                     {
+                        Console.WriteLine($"\nWelcome back, Admin {admin.username}!");
                         AdminMenu(admin);
                     }
                     
                 }
                 else if (choice == "3")
                 {
-                    Customer customer = new Customer("Customer"); // Create a new customer object
+                    // Create a new customer object
+                    Console.Write("\nEnter your name: ");
+                    string cname = Console.ReadLine();
+                    Customer customer = new Customer(cname);
+                    Console.WriteLine($"\nWelcome, {customer.Name}!");
+                    // To call the CustomerMenu method with the created customer object
                     CustomerMenu(customer);
                 }
                 else
@@ -266,23 +287,26 @@ namespace supermarket_management
                 }
             }
         }
+        //Malak & Habeba
         // Method to create an admin account
         public static Admin CreateAdmin()
         {
             string name, pass;
             while (true)
             {
+                // Prompt the user for admin username and password
                 Console.WriteLine("\n--- Create Admin ---");
                 Console.Write("Enter Username: ");
                 name = Console.ReadLine();
                 Console.Write("Enter Password: ");
                 pass = Console.ReadLine();
+
                 if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(pass))
                 {
                     Console.WriteLine("\nUsername or Password cannot be empty. Please try again.\n");
                     continue;
                 }
-                
+                // Check if the username already exists in the admin list
                 Admin existingAdmin = DataStore.admins.Find(a => a.username == name);
 
                 if (existingAdmin != null)
@@ -307,6 +331,7 @@ namespace supermarket_management
             Console.WriteLine("\nAdmin created successfully!");
             return admin; // Return the created admin object
         }
+        //Malak & Habeba
         // Method to check login admin
         public static Admin LoginAdmin()
         {
@@ -320,6 +345,7 @@ namespace supermarket_management
             
             while(true)
             {
+                // Prompt the user for admin username and password
                 Console.WriteLine("\n--- Admin Login ---");
                 Console.Write("Enter Username: ");
                 user = Console.ReadLine();
@@ -331,7 +357,7 @@ namespace supermarket_management
                     Console.WriteLine("\nUsername or Password cannot be empty. Please try again.\n");
                     continue;
                 }
-                
+                // Check if the username and password match an existing admin account
                 Admin admin = DataStore.admins.Find(a => a.username == user && a.password == pass);
 
                 if (admin != null)
@@ -342,6 +368,7 @@ namespace supermarket_management
 
                 else
                 {
+                    // If no match found, prompt the user to try again or create an account
                     Console.WriteLine("\nInvalid username or password or you don't have admin account!\n");
                     Console.Write("you have account(y/n):");
                     string haveAccount = Console.ReadLine().ToLower();
@@ -366,11 +393,13 @@ namespace supermarket_management
             
             
         }
+        //Malak & Habeba
         //Admin menu
         public static void AdminMenu(Admin admin)
         {
             while (true)
             {
+                // Display the admin menu options
                 Console.WriteLine("\n--- Admin Menu ---");
                 Console.WriteLine("1. View Products");
                 Console.WriteLine("2. Add Product");
@@ -379,6 +408,7 @@ namespace supermarket_management
                 Console.Write("Choose: ");
                 string Choice = Console.ReadLine();
 
+                // Check the user's choice and perform the corresponding action
                 switch (Choice)
                 {
                     case "1":
@@ -413,12 +443,14 @@ namespace supermarket_management
                         return;
 
                     default:
+                        // Handle invalid choice
                         Console.WriteLine("\nInvalid choice. Please try again.\n");
                         break;
                 }
                 
             }
         }
+        //Malak & Habeba
         // Method to input product details
         public static void InputProductsDetails(Admin admin)
         {
@@ -475,11 +507,13 @@ namespace supermarket_management
             admin.AddProduct(newProduct, quantity);
 
         }
+        //Malak & Habeba
         // Customer menu
         public static void CustomerMenu(Customer customer)
         {
             while (true)
             {
+                // Display the customer menu options
                 Console.WriteLine("\n--- Customer Menu ---");
                 Console.WriteLine("1. View Products");
                 Console.WriteLine("2. Buy Product");
@@ -511,10 +545,11 @@ namespace supermarket_management
 
                         while (true)
                         {
+                            
                             Console.WriteLine("\n--- Buy Product ---");
                             Console.Write("Enter Product Name: ");
                             string pname = Console.ReadLine();
-
+                            
                             Console.Write("Enter Quantity to Buy: ");
                             int qty;
                             if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
@@ -527,6 +562,7 @@ namespace supermarket_management
                                 Console.WriteLine("\nProduct name cannot be empty.  Please try again.\n");
                                 continue;
                             }
+                            // Find the product in the DataStore
                             Product product = null;
 
                             foreach (Product p in DataStore.products)
@@ -537,14 +573,16 @@ namespace supermarket_management
                                     break;
                                 }
                             }
+                            // Check if the product exists
                             if (product != null)
                             {
+                                // Check if the requested quantity is available
                                 while (true)
                                 {
                                     if (product.Quantity >= qty)
                                     {
                                         customer.buyProduct(product, qty);
-                                        break; // exit inner loop
+                                        break; 
                                     }
                                     else
                                     {
@@ -592,22 +630,23 @@ namespace supermarket_management
                             }
                         }
 
-                        break;
+                    break;
 
                     case "3":
                         // View customer's purchases
                         customer.displayCart();
-                        break;
+                    break;
 
                     case "4":
                         // Back to main menu
                         Console.WriteLine("Exit from the list of Customer...\n");
                         DataStore.saveProducts();
-                        return;
+                    return;
 
                     default:
+                        // Handle invalid choice
                         Console.WriteLine("Invalid choice. Please try again.");
-                        break;
+                    break;
                 }
 
             }
