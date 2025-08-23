@@ -380,11 +380,12 @@ namespace supermarket_management
                     }
                     else if (haveAccount == "n")
                     {
+                        Console.WriteLine("\ncreate account first.\n");
                         return null; // To return null if the user doesn't have an account
                     }
                     else
                     {
-                        Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                        Console.WriteLine("\nInvalid input. Please enter 'y' or 'n'.");
                         continue; // To continue the loop for login again
 
                     }
@@ -550,14 +551,20 @@ namespace supermarket_management
 
                     case "2":
                         // Buy a product
-
+                        string pname;
+                        int qty;
                         while (true)
                         {
-                            
                             Console.WriteLine("\n--- Buy Product ---");
                             Console.Write("Enter Product Name: ");
-                            string pname = Console.ReadLine().Trim();
+                            pname = Console.ReadLine().Trim();
 
+                            Console.Write("Enter Quantity to Buy: ");
+                            if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
+                            {
+                                Console.WriteLine("\nInvalid quantity.  Please try again.\n");
+                                continue;
+                            }
                             // Validate product name input
                             if (string.IsNullOrEmpty(pname))
                             {
@@ -574,15 +581,7 @@ namespace supermarket_management
                                 Console.WriteLine("\nProduct name cannot be only symbols. Please try again.\n");
                                 continue;
                             }
-                            //check if Quantity is a valid number
-                            Console.Write("Enter Quantity to Buy: ");
-                            int qty;
-                            if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
-                            {
-                                Console.WriteLine("\nInvalid quantity.  Please try again.\n");
-                                continue;
-                            }
-                           
+
                             // Find the product in the DataStore
                             Product product = null;
 
@@ -603,7 +602,7 @@ namespace supermarket_management
                                     if (product.Quantity >= qty)
                                     {
                                         customer.buyProduct(product, qty);
-                                        break; 
+                                        break;
                                     }
                                     else
                                     {
@@ -624,15 +623,15 @@ namespace supermarket_management
                                             else if (response == "n")
                                             {
                                                 Console.WriteLine("\nCancelling purchase.");
-                                                break; 
+                                                break;
                                             }
                                             else
                                             {
                                                 Console.WriteLine("\nInvalid response. Cancelling purchase.");
-                                                break; 
+                                                break;
                                             }
 
-                                            
+
                                         }
                                         else
                                         {
@@ -643,6 +642,7 @@ namespace supermarket_management
                                 }
 
                                 break; // exit main buy loop after finishing purchase attempt
+                            
                             }
                             else
                             {
@@ -660,13 +660,13 @@ namespace supermarket_management
 
                     case "4":
                         // Back to main menu
-                        Console.WriteLine("Exit from the list of Customer...\n");
+                        Console.WriteLine("\nExit from the list of Customer...\n");
                         DataStore.saveProducts();
                     return;
 
                     default:
                         // Handle invalid choice
-                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.WriteLine("\nInvalid choice. Please try again.");
                     break;
                 }
 
