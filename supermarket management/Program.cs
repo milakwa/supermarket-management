@@ -138,30 +138,74 @@
     {
         static void Main(string[] args)
         {
-            Admin a = new Admin("malak", "1234");
-            int n = 2;
-            while (n>0)
-            {
-                
-                string name;
-                
-                string c;
-
-                int q;
-                Console.Write("productionDate:");
-                DateTime p =DateTime.Parse(Console.ReadLine());
-                Console.Write("expirydate:");
-                DateTime e = DateTime.Parse(Console.ReadLine());
-                Product product = new Product(name="malak", c="hhh", q=90, p, e);
-                
-                a.AddProduct(product, product.Quantity);
-                n--;
+                while(true){
+                Console.WriteLine("1. Admin");
+                Console.WriteLine("2. Customer");
+                Console.WriteLine("3. Exit");
+                Console.Write("Enter your choice: ");
+                int choice = int.Parse(Console.ReadLine());
+            switch(choice){
+                case 1:
+                    Console.Write("Enter your name: ");
+                    string user = Console.ReadLine();
+                    Console.Write("Creat your pass: ");
+                    string pass = Console.ReadLine();
+                    Console.WriteLine("Hello "+ user);
+                    Console.WriteLine("1. Show all products");
+                    Console.WriteLine("2. Add new products");
+                    Console.WriteLine("3. Show expiry products");
+                    Console.WriteLine("4. Exit");
+                    Console.Write("Enter your choice: ");
+                    int choice1 = int.Parse(Console.ReadLine());
+                    switch(choice1){
+                        case 1:
+                           Display();
+                           break;
+                        case 2:
+                           AddProuct();
+                           break;
+                        case 3:
+                           ViewExpiryAlerts();
+                           break;
+                        case 4:
+                           return;
+                           break;
+                        default:
+                           Console.WriteLine("Invalid choice. Try again");           
+                           break;
+                    }
+                    break;
+                case 2:
+                    Console.Write("Enter your name: ");
+                    string user = Console.ReadLine();
+                    Console.Write("Creat your pass: ");
+                    string pass = Console.ReadLine();
+                    Console.WriteLine("Hello "+ user);
+                    Console.WriteLine("1. Show all products");
+                    Console.WriteLine("2. Show list products bought");
+                    Console.Write("Enter your choice: ");
+                    int choice2 = int.Parse(Console.ReadLine());
+                    switch(choice2){
+                            case 1:
+                                Display();
+                                Console.Write("Enter num products to buy; ");
+                                    //
+                                break;
+                            case 2: 
+                                    //
+                                break;
+                            default:
+                                break;
+                    }
+                    break;
+                case 3:
+                    return;
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Try again");
+                    break; 
             }
-            
-
-            a.viewExpiryAlerts();
-
-
+          }
         }
     }
 }
