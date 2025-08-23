@@ -1,24 +1,24 @@
-Milk ,Dairy ,30 ,15-8-2025 ,25-8-2025
-Yogurt ,Dairy ,40 ,15-8-2025 ,29-8-2025
-Cheese ,Dairy ,50 ,15-8-2025 ,30-8-2026
-Butter ,Dairy ,25 ,15-8-2025 ,20-8-2026
-Ice kream ,Dairy ,60 ,15-8-2025 ,22-8-2026
-Cake ,Baked ,20 ,15-8-2025 ,1-9-2025
-Bread ,Baked ,100 ,15-8-2025 ,26-8-2025
-Cup Cake ,Baked ,20 ,15-8-2025 ,20-9-2025
-Cookies ,Baked ,50 ,15-8-2025 ,25-8-2025
-Biscuit ,Candies ,60 ,15-8-2025 ,25-8-2026
-Lollipop ,Candies ,70 ,15-8-2025 ,25-8-2026
-Chocolate ,Candies ,30 ,15-8-2025 ,25-8-2026
-Juices ,Drinks ,25 ,15-8-2025 ,22-8-2026
-Sparkling water ,Drinks ,80 ,15-8-2025 ,22-8-2026
-Water ,Drinks ,100 ,15-8-2025 ,22-8-2026
-Popcorn ,Snacks ,55 ,15-8-2025 ,22-8-2026
-Chips ,Snacks ,56 ,15-8-2025 ,22-8-2027
-Nuts ,Snacks ,60 ,15-8-2025 ,22-8-2026
-Rice ,Grains ,40 ,15-8-2025 ,22-8-2027
-Lentil ,Grains ,70 ,15-8-2025 ,22-8-2027
-Wheat ,Grains ,30 ,15-8-2025 ,22-8-2027
-Corn ,Grains ,50 ,15-8-2025 ,22-8-2027
+Milk ,Dairy ,30 ,2025-08-15 ,2025-08-25
+Yogurt ,Dairy ,40 ,2025-08-15 ,2025-08-29
+Cheese ,Dairy ,50 ,2025-08-15 ,2026-08-30
+Butter ,Dairy ,25 ,2025-08-15 ,2026-08-20
+Ice kream ,Dairy ,60 ,2025-08-15 ,2026-08-22
+Cake ,Baked ,20 ,2025-08-15 ,2025-09-01
+Bread ,Baked ,100 ,2025-08-15 ,2025-08-26
+Cup Cake ,Baked ,20 ,2025-08-15 ,2025-09-20
+Cookies ,Baked ,50 ,2025-08-15 ,2025-08-25
+Biscuit ,Candies ,60 ,2025-08-15 ,2026-08-25
+Lollipop ,Candies ,70 ,2025-08-15 ,2026-08-25
+Chocolate ,Candies ,30 ,2025-08-15 ,2026-08-25
+Juices ,Drinks ,25 ,2025-08-15 ,2026-08-22
+Sparkling water ,Drinks ,80 ,2025-08-15 ,2026-08-22
+Water ,Drinks ,100 ,2025-08-15 ,2026-08-22
+Popcorn ,Snacks ,55 ,2025-08-15 ,2026-08-22
+Chips ,Snacks ,56 ,2025-08-15 ,2027-08-22
+Nuts ,Snacks ,60 ,2025-08-15 ,2026-08-22
+Rice ,Grains ,40 ,2025-08-15 ,2027-08-22
+Lentil ,Grains ,70 ,2025-08-15 ,2027-08-22
+Wheat ,Grains ,30 ,2025-08-15 ,2027-08-22
+Corn ,Grains ,50 ,2025-08-15 ,2027-08-22
+Oat ,Grains ,20 ,2025-08-15 ,2027-08-22
 
-Oat ,Grains ,20 ,15-8-2025 ,22-8-2027
