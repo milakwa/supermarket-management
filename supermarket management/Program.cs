@@ -32,7 +32,6 @@ namespace supermarket_management
             Console.WriteLine($"{Name} ,{Category} ,{Quantity},{ProductionDate:yyyy-MM-dd},{ExpiryDate:yyyy-MM-dd}\n");
         }
     }
-    
     // DataStore class to manage products and admins
     public static class DataStore
     {
@@ -74,7 +73,6 @@ namespace supermarket_management
         }
 
     }
-    
     // Order class to represent a customer's order in the supermarket
     public class Order
     {
@@ -91,7 +89,6 @@ namespace supermarket_management
             Console.WriteLine($"- {ProductName} (qty:{Quantity})");
         }
     }
-    
     // Customer class to represent a customer in the supermarket
     public class Customer
     {
@@ -108,19 +105,22 @@ namespace supermarket_management
         {
             if (p.Quantity >= quantity)
             {
+                // Deduct from stock
                 p.Quantity -= quantity;
-                // To add the purchased product to the customer's cart
-                cart.Add(new Order(p.Name,quantity));
 
-                Console.WriteLine($"You have successfully purchased {quantity} of {p.Name}!");
+                // Add the order to the customer's cart (list of orders)
+                cart.Add(new Order(p.Name, quantity));
+
+                Console.WriteLine($"\nYou have successfully purchased {quantity} of {p.Name}!");
+                Console.WriteLine($"Remaining stock: {p.Quantity}");
             }
             else
             {
-                Console.WriteLine($"! Purchase Failed ! Not enough {p.Name} in stock");
+                Console.WriteLine($"\nPurchase failed. Not enough {p.Name} in stock.");
                 Console.WriteLine($"Available quantity is {p.Quantity}");
             }
         }
-
+    
         // Method to display the customer's cart
         public void displayCart()
         {
@@ -135,7 +135,6 @@ namespace supermarket_management
             }
         }
     }
-    
     // Admin class to manage products in the supermarket
     public class Admin
     {
@@ -156,7 +155,7 @@ namespace supermarket_management
 
             foreach (Product prod in DataStore.products)
             {
-                if (prod.Name == p.Name && prod.Category == p.Category)
+                if ((prod.Name.ToLower().Trim()) == (p.Name.ToLower().Trim()) && (prod.Category.ToLower().Trim()) == (p.Category.ToLower().Trim()))
                 {
                     existingProduct = prod;
                     break;
@@ -166,12 +165,12 @@ namespace supermarket_management
             if (existingProduct != null)
             {
                 existingProduct.Quantity += q;
-                Console.WriteLine($"Updated {existingProduct.Name}, new quantity = {existingProduct.Quantity}");
+                Console.WriteLine($"\nUpdated {existingProduct.Name}, new quantity = {existingProduct.Quantity}");
             }
             else
             {
                 DataStore.products.Add(p);
-                Console.WriteLine($"Added new product: {p.Name}");
+                Console.WriteLine($"\nAdded new product: {p.Name}");
             }
         }
         // Method to view all products in store
@@ -262,7 +261,7 @@ namespace supermarket_management
                 }
                 else
                 {
-                    Console.WriteLine("Exiting.......");
+                    Console.WriteLine("\nExiting.......");
                     return;
                 }
             }
@@ -417,10 +416,7 @@ namespace supermarket_management
                         Console.WriteLine("\nInvalid choice. Please try again.\n");
                         break;
                 }
-                if (Choice == "4")
-                {
-                    break; // To exit the admin menu
-                }
+                
             }
         }
         // Method to input product details
@@ -513,7 +509,7 @@ namespace supermarket_management
                     case "2":
                         // Buy a product
 
-                        while(true)
+                        while (true)
                         {
                             Console.WriteLine("\n--- Buy Product ---");
                             Console.Write("Enter Product Name: ");
@@ -523,19 +519,19 @@ namespace supermarket_management
                             int qty;
                             if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
                             {
-                                Console.WriteLine("Invalid quantity.  Please try again.");
+                                Console.WriteLine("\nInvalid quantity.  Please try again.\n");
                                 continue;
                             }
                             if (string.IsNullOrEmpty(pname))
                             {
-                                Console.WriteLine("Product name cannot be empty.  Please try again.");
+                                Console.WriteLine("\nProduct name cannot be empty.  Please try again.\n");
                                 continue;
                             }
                             Product product = null;
 
                             foreach (Product p in DataStore.products)
                             {
-                                if (p.Name == pname)
+                                if ((p.Name.ToLower().Trim()) == (pname.ToLower().Trim()))
                                 {
                                     product = p;
                                     break;
@@ -543,11 +539,57 @@ namespace supermarket_management
                             }
                             if (product != null)
                             {
-                                customer.buyProduct(product, qty);
-                                break;
+                                while (true)
+                                {
+                                    if (product.Quantity >= qty)
+                                    {
+                                        customer.buyProduct(product, qty);
+                                        break; // exit inner loop
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"\nNot enough stock. Only {product.Quantity} available.");
+                                        if (product.Quantity > 0)
+                                        {
+                                            Console.Write("Do you want to buy a smaller quantity (y/n)? ");
+                                            string response = Console.ReadLine().ToLower();
+                                            if (response == "y")
+                                            {
+                                                Console.Write($"Enter a smaller quantity (max {product.Quantity}): ");
+                                                if (!int.TryParse(Console.ReadLine(), out qty) || qty <= 0)
+                                                {
+                                                    Console.WriteLine("\nInvalid quantity. Cancelling purchase.");
+                                                    break;
+                                                }
+                                            }
+                                            else if (response == "n")
+                                            {
+                                                Console.WriteLine("\nCancelling purchase.");
+                                                break; 
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("\nInvalid response. Cancelling purchase.");
+                                                break; 
+                                            }
+
+                                            
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("\nThis product is completely out of stock.");
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                break; // exit main buy loop after finishing purchase attempt
                             }
                             else
-                                Console.WriteLine("Product not found. Please try again.");
+                            {
+                                Console.WriteLine("\nProduct not found. Please try again.\n");
+                                continue; // ask again
+                            }
                         }
 
                         break;
@@ -559,6 +601,7 @@ namespace supermarket_management
 
                     case "4":
                         // Back to main menu
+                        Console.WriteLine("Exit from the list of Customer...\n");
                         DataStore.saveProducts();
                         return;
 
