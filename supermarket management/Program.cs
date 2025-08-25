@@ -257,9 +257,14 @@ namespace supermarket_management
                 if (choice == "1")
                 {
                     Admin admin = CreateAdmin(); // Here we can use the created admin object
-                    DataStore.admins.Add(admin);// To add the created admin to the list
-                    Console.WriteLine($"\nWelcome, Admin {admin.username}!");
-                    AdminMenu(admin);// To call the AdminMenu method with the created admin object
+                    if (admin != null)
+                    {
+                        DataStore.admins.Add(admin);// To add the created admin to the list
+                        Console.WriteLine($"\nWelcome, Admin {admin.username}!");
+                        AdminMenu(admin);// To call the AdminMenu method with the created admin object
+                    }
+                    
+                    
                 }
                 else if (choice == "2")
                 {
@@ -313,11 +318,10 @@ namespace supermarket_management
 
                 if (existingAdmin != null)
                 {
-                    Console.WriteLine("\nThis username already exists. Logging you in...\n");
+                    Console.WriteLine("\nThis username already exists. Logging you in...");
                     
                     if (existingAdmin.password == pass)
                     {
-                        Console.WriteLine($"Welcome back {existingAdmin.username}!");
                         return existingAdmin;
                     }
                     else
